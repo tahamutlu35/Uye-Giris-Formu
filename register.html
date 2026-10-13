@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111221">
+  <title>Ücretsiz Üye Ol</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .register-card{width:min(100%,520px);padding:42px clamp(25px,7vw,64px);border-radius:20px;background:#fff;box-shadow:0 30px 90px #2c275721}
+    .register-card h1{margin:0 0 8px;font-size:29px;letter-spacing:-1px}.register-card>p{color:#85859a;font-size:13px;margin:0 0 28px}
+    .register-form{display:flex;flex-direction:column;gap:9px}.register-form label{margin-top:9px;color:#444458;font-size:12px;font-weight:700}
+    .register-form input{height:46px;padding:0 13px;border:1px solid #e7e6ef;border-radius:9px;background:#fcfcfe;font-family:inherit;font-size:13px}
+    .register-form input:focus{outline:0;border-color:#9586ff;box-shadow:0 0 0 3px #7865f61c}
+    .register-form button{height:47px;margin-top:15px;border:0;border-radius:9px;background:linear-gradient(100deg,#7965f3,#8976fb);color:white;font-weight:700;cursor:pointer}
+    .register-error{padding:11px;border-radius:8px;background:#fff0f0;color:#a12d38;font-size:12px}.register-login{margin-top:22px!important;text-align:center}
+    .register-login a{color:#7865f6;font-weight:700}
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <section class="register-card" aria-labelledby="register-title">
+      <h1 id="register-title">Yeni hesap oluştur</h1>
+      <p>Üye olmak için bilgilerini doldur.</p>
+      <p class="register-error" id="register-error" role="alert" hidden></p>
+      <form class="register-form" action="/register" method="post">
+        <label for="email">E-posta adresi</label>
+        <input id="email" name="email" type="email" autocomplete="email" placeholder="ornek@email.com" required>
+        <label for="password">Şifre</label>
+        <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" placeholder="En az 8 karakter" required>
+        <label for="password_confirmation">Şifreyi tekrar gir</label>
+        <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" minlength="8" placeholder="Şifreni tekrar gir" required>
+        <button type="submit">Üye ol</button>
+      </form>
+      <p class="register-login">Zaten hesabın var mı? <a href="/">Giriş yap</a></p>
+    </section>
+  </main>
+  <script>
+    const messages = {
+      email: 'Lütfen geçerli bir e-posta adresi girin.',
+      password: 'Şifren en az 8 karakter olmalıdır.',
+      confirm: 'Girdiğin şifreler eşleşmiyor.',
+      exists: 'Bu e-posta adresiyle zaten bir hesap var.'
+    };
+    const error = new URLSearchParams(location.search).get('error');
+    if (messages[error]) {
+      const box = document.querySelector('#register-error');
+      box.textContent = messages[error];
+      box.hidden = false;
+    }
+    const form = document.querySelector('.register-form');
+    form.addEventListener('submit', (event) => {
+      const password = document.querySelector('#password');
+      const confirmation = document.querySelector('#password_confirmation');
+      confirmation.setCustomValidity(password.value === confirmation.value ? '' : 'Şifreler eşleşmiyor.');
+      if (!form.reportValidity()) event.preventDefault();
+    });
+    document.querySelector('#password_confirmation').addEventListener('input', (event) => event.target.setCustomValidity(''));
+  </script>
+</body>
+</html>
