@@ -1,4 +1,22 @@
-members.db
-__pycache__/
-.venv/
+
+# Gizli bilgiler
 .env
+.env.*
+!.env.example
+
+# Veritabanları
+members.db
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Yedek dosyaları
+*.bak
+*.bak-*
+*.bak.*
