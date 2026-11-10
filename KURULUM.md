@@ -39,3 +39,11 @@ python app.py
 ## Üretim notları
 
 Bu küçük standart kütüphane sunucusu, TLS sonlandıran bir reverse proxy arkasında çalıştırılmalıdır. `SITE_URL` mutlaka HTTPS olunca oturum ve OAuth durum çerezleri `Secure`, her durumda `HttpOnly` ve `SameSite=Lax` olur. Sunucu yaln?zca 127.0.0.1 ?zerinde dinler; PORT varsay?lan olarak 80 olur. 
+
+### GitHub Codespaces verileri
+
+Uygulama `members.db` dosyasini varsayilan olarak proje klasorune yazar. Codespaces icinde bu klasor `/workspaces` altindaysa SQLite dosyasi Codespace durdurulup yeniden baslatildiginda ve container rebuild edildiginde korunur. Uygulama prosesi yeniden baslayinca `sessions` tablosu SQLite dosyasinda kaldigi icin oturumlar devam eder. Veritabani silinir, `MEMBERS_DB_PATH` gecici bir konuma ayarlanir veya Codespace silinirse uyeler ve oturumlar kaybolur. Canli kullanici verisi icin Codespaces dosya alanini yedek/kalici veritabani olarak kabul etmeyin.
+
+`CSRF_SECRET` icin her ortamda kalici, rastgele ve en az 32 baytlik bir deger kullanin. Bos birakilirsa her uygulama baslangicinda gecici anahtar uretilir; restart sonrasinda acik formlardaki CSRF tokenlari gecersiz olur. Deploy ayarlarinda gercek degerleri secret/environment variable olarak tutun, `.env` dosyasini Git'e eklemeyin. `SITE_URL` HTTPS olmali; bu deger HTTPS `Secure` cerezlerini etkinlestirir.
+
+GitHub Codespaces, `/workspaces` altindaki dosyalarin stop/start ve container rebuild boyunca korundugunu aciklar: https://docs.github.com/en/codespaces/developing-in-a-codespace/rebuilding-the-container-in-a-codespace

@@ -119,7 +119,7 @@ html[data-theme="dark"] .login-error{border-color:#70434a;background:#39272e;col
         <a class="brand mobile-brand" href="/">KAVRIX<span class="brand__dot">.</span></a>
         <div class="form-heading"><span class="form-heading__icon" aria-hidden="true">✦</span><h2 id="signup-title">Hesabını oluştur</h2><p>Üyeliğini başlatmak için bilgilerini gir.</p></div>
         <p class="signup-error" id="signup-error" role="alert" hidden></p>
-        <form class="signup-form" action="/register" method="post">
+        <form class="signup-form" action="/register" method="post"><input type="hidden" name="csrf_token" value="{{CSRF_TOKEN}}">
           <label class="field-label" for="signup-name">Ad Soyad</label>
           <div class="input-wrap"><input id="signup-name" name="full_name" type="text" placeholder="Adın ve soyadın" autocomplete="name" maxlength="120" required></div>
           <label class="field-label" for="signup-email">E-posta</label>
