@@ -82,7 +82,9 @@ class MembershipSecurityTests(unittest.TestCase):
         status, _, _ = self.request("POST", "/register", {"email": "x@y.z"})
         self.assertEqual(status, 403)
         self.assertEqual(self.register()[0], 303)
-        self.assertEqual(self.register()[0], 303)
+        duplicate_status, duplicate_headers, _ = self.register()
+        self.assertEqual(duplicate_status, 303)
+        self.assertEqual(duplicate_headers["Location"], "/?error=register")
         with app.connect_db() as db:
             rows = db.execute("SELECT password_hash, salt FROM members WHERE email=?", ("person@example.com",)).fetchall()
         self.assertEqual(len(rows), 1)
@@ -99,6 +101,21 @@ class MembershipSecurityTests(unittest.TestCase):
         with app.connect_db() as db:
             count = db.execute("SELECT attempts FROM login_attempts").fetchone()[0]
         self.assertEqual(count, app.LOGIN_ATTEMPT_LIMIT)
+
+    def test_ip_throttle_covers_different_email_addresses(self):
+        previous_limit = app.LOGIN_IP_ATTEMPT_LIMIT
+        app.LOGIN_IP_ATTEMPT_LIMIT = 2
+        try:
+            self.assertEqual(self.login(email="one@example.com", password="wrong password")[1]["Location"],
+                             "/login?error=invalid")
+            self.assertEqual(self.login(email="two@example.com", password="wrong password")[1]["Location"],
+                             "/login?error=invalid")
+            self.assertEqual(self.login(email="three@example.com", password="wrong password")[1]["Location"],
+                             "/login?error=invalid")
+            with app.connect_db() as db:
+                self.assertEqual(db.execute("SELECT MAX(attempts) FROM login_attempts").fetchone()[0], 2)
+        finally:
+            app.LOGIN_IP_ATTEMPT_LIMIT = previous_limit
 
     def test_secure_session_rotation_logout_and_per_request_auth(self):
         self.register()
@@ -124,7 +141,12 @@ class MembershipSecurityTests(unittest.TestCase):
         with app.connect_db() as db:
             self.assertEqual(db.execute("SELECT COUNT(*) FROM sessions WHERE token_hash=?",
                                         (hashlib.sha256(cookie2.split("=", 1)[1].encode()).hexdigest(),)).fetchone()[0], 1)
-        self.assertEqual(self.post("/logout", {}, cookie=cookie2)[0], 303)
+        logout_status, logout_headers, _ = self.post("/logout", {}, cookie=cookie2)
+        self.assertEqual(logout_status, 303)
+        cleared_cookie = next(v for v in logout_headers["Set-Cookie"] if v.startswith("member_session="))
+        self.assertIn("Secure", cleared_cookie)
+        self.assertIn("HttpOnly", cleared_cookie)
+        self.assertIn("SameSite=Lax", cleared_cookie)
         self.assertEqual(self.request("GET", "/dashboard", cookie=cookie2)[1]["Location"], "/login")
         with app.connect_db() as db:
             self.assertEqual(db.execute("SELECT COUNT(*) FROM sessions").fetchone()[0], 0)

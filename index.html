@@ -333,7 +333,7 @@ html[data-theme="dark"] .login-error{border-color:#70434a;background:#39272e;col
       document.querySelector('#signupView').hidden = false;
       document.title = 'Hesap Oluştur';
     }
-    const signupMessages = { name: 'Ad Soyad alanını doldur.', email: 'Lütfen geçerli bir e-posta adresi girin.', password: 'Şifren en az 8 karakter olmalıdır.', confirm: 'Girdiğin şifreler eşleşmiyor.', exists: 'Bu e-posta adresiyle zaten bir hesap var.' };
+    const signupMessages = { name: 'Ad Soyad alanını doldur.', email: 'Lütfen geçerli bir e-posta adresi girin.', password: 'Şifren en az 8 karakter olmalıdır.', confirm: 'Girdiğin şifreler eşleşmiyor.', register: 'Kayıt tamamlanamadı. Bilgileri kontrol edip tekrar dene.' };
     const signupErrorCode = new URLSearchParams(location.search).get('error');
     if (isSignupPage && signupMessages[signupErrorCode]) {
       const message = document.querySelector('#signup-error');

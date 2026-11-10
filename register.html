@@ -136,7 +136,7 @@ html[data-theme="dark"] .login-error{border-color:#70434a;background:#39272e;col
     <p class="copyright">© 2025 Kavrix. Tüm hakları saklıdır.</p>
   </main>
   <script>
-    const messages={name:'Ad Soyad alanını doldur.',email:'Lütfen geçerli bir e-posta adresi girin.',password:'Şifren en az 8 karakter olmalıdır.',confirm:'Girdiğin şifreler eşleşmiyor.',exists:'Bu e-posta adresiyle zaten bir hesap var.'};
+    const messages={name:'Ad Soyad alanını doldur.',email:'Lütfen geçerli bir e-posta adresi girin.',password:'Şifren en az 8 karakter olmalıdır.',confirm:'Girdiğin şifreler eşleşmiyor.',register:'Kayıt tamamlanamadı. Bilgileri kontrol edip tekrar dene.'};
     const error=new URLSearchParams(location.search).get('error');
     if(messages[error]){const box=document.querySelector('#signup-error');box.textContent=messages[error];box.hidden=false;}
     const form=document.querySelector('.signup-form');
