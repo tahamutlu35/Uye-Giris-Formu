@@ -1,0 +1,28 @@
+{
+  "name": "Uye Giris Formu",
+  "dockerComposeFile": "compose.yaml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/uye-giris-formu",
+  "forwardPorts": [10000],
+  "portsAttributes": {
+    "10000": {
+      "label": "Uye Giris Formu",
+      "onAutoForward": "openBrowser",
+      "protocol": "http"
+    }
+  },
+  "postCreateCommand": "python -m pip install --user -r requirements.txt",
+  "postStartCommand": "bash -lc 'if ! curl -fsS http://127.0.0.1:10000/ >/dev/null; then nohup python app.py > /tmp/uye-giris-formu.log 2>&1 & fi'",
+  "remoteEnv": {
+    "DATABASE_URL": "postgresql://uyelik:uyelik_dev@db:5432/uyelik",
+    "HOST": "0.0.0.0",
+    "PORT": "10000",
+    "SITE_URL": "https://${localEnv:CODESPACE_NAME}-10000.${localEnv:GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}",
+    "CSRF_SECRET": "codespaces-local-development-secret-change-before-production"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python"]
+    }
+  }
+}
